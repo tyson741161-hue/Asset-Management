@@ -1,0 +1,6 @@
+Flask==3.0.0
+flask-mail==0.9.1
+imap-tools==1.7.1
+psycopg2-binary==2.9.9
+SQLAlchemy==2.0.23
+Flask-SQLAlchemy==3.1.1
