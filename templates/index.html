@@ -22,360 +22,298 @@
                     <input type="password" id="loginPassword" required placeholder="Enter password">
                 </div>
                 <div id="loginError" class="login-error"></div>
-                <button type="submit" class="btn-primary">Login</button>
+                <button type="submit" class="btn-primary" style="width:100%;">Login</button>
             </form>
         </div>
     </div>
 
     <!-- Main Application -->
-    <div id="mainApp" class="container" style="display: none;">
+    <div id="mainApp" style="display: none;">
         <header>
-            <h1>IT Asset Management System</h1>
+            <h1>IT Asset <span>Management</span></h1>
+            <div class="settings-wrapper">
+                <button class="settings-btn" id="settingsBtn" onclick="toggleSettingsMenu()">
+                    <span class="avatar">A</span>
+                    Admin
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                </button>
+                <div class="settings-dropdown" id="settingsDropdown">
+                    <div class="dd-header">Account</div>
+                    <button onclick="showProfileModal()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        Profile
+                    </button>
+                    <button onclick="showMailConfigModal()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
+                        Configure Mail
+                        <span id="mailStatusDot" class="mail-dot disconnected" style="margin-left:auto;"></span>
+                    </button>
+                    <div class="dd-divider"></div>
+                    <button class="danger" onclick="doLogout()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                        Logout
+                    </button>
+                </div>
+            </div>
         </header>
 
-        <div class="tabs">
-            <button class="tab-btn active" data-tab="tickets">Tickets</button>
-            <button class="tab-btn" data-tab="assets">Assets</button>
-            <button class="tab-btn" data-tab="request">Request</button>
-        </div>
-
-        <div id="assets" class="tab-content">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2>Asset Management</h2>
-                <button onclick="showAddAssetForm()" class="btn-primary" style="padding: 10px 20px;">+ Add Asset</button>
+        <div class="container">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="tickets">Tickets</button>
+                <button class="tab-btn" data-tab="assets">Assets</button>
+                <button class="tab-btn" data-tab="request">Request</button>
             </div>
-            <div class="filters">
-                <select id="categoryFilter">
-                    <option value="all">All Categories</option>
-                    <optgroup label="Devices">
-                        <option value="laptop">Laptop</option>
-                        <option value="desktop">Desktop</option>
-                        <option value="android-device">Android Device</option>
-                        <option value="ios-device">iOS Device</option>
-                        <option value="mac-mini">Mac Mini</option>
-                        <option value="mac-device">Mac Device</option>
-                        <option value="tablet">Tablet</option>
-                        <option value="server">Server</option>
-                    </optgroup>
-                    <optgroup label="Network">
-                        <option value="firewall">Firewall</option>
-                        <option value="switch">Switch</option>
-                        <option value="router">Router</option>
-                        <option value="access-point">Access Point</option>
-                    </optgroup>
-                    <optgroup label="Accessories">
-                        <option value="ram">RAM</option>
-                        <option value="mouse">Mouse</option>
-                        <option value="headphone">Headphone</option>
-                        <option value="hard-disk">Hard Disk</option>
-                        <option value="wifi-adapter">WiFi Adapter</option>
-                        <option value="keyboard">Keyboard</option>
-                        <option value="charger">Charger</option>
-                    </optgroup>
-                </select>
-                <select id="statusFilter">
-                    <option value="all">All Status</option>
-                    <option value="available">Available</option>
-                    <option value="assigned">Assigned</option>
-                    <option value="maintenance">Maintenance</option>
-                    <option value="retired">Retired</option>
-                </select>
-                <select id="officeFilter">
-                    <option value="all">All Offices</option>
-                    <option value="Office 1">Office 1</option>
-                    <option value="Office 2">Office 2</option>
-                    <option value="Bangalore">Bangalore</option>
-                    <option value="London(uk)">London (UK)</option>
-                    <option value="Not available">Not Available</option>
-                </select>
-                <input type="text" id="searchAsset" placeholder="Search assets...">
-            </div>
-            <div id="assetsList"></div>
-        </div>
 
-        <!-- Add Asset Modal -->
-        <div id="addAssetModal" class="modal" style="display: none;">
-            <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
-                <span class="close" onclick="closeAddAssetForm()">&times;</span>
-                <form id="assetForm">
-                    <h2>Add New Asset</h2>
-                    <div class="form-group">
-                        <label>Asset Type</label>
-                        <select id="assetType" required>
-                            <option value="">Select Type</option>
-                            <optgroup label="Devices">
-                                <option value="laptop">Laptop</option>
-                                <option value="desktop">Desktop</option>
-                                <option value="android-device">Android Device</option>
-                                <option value="ios-device">iOS Device</option>
-                                <option value="mac-mini">Mac Mini</option>
-                                <option value="mac-device">Mac Device</option>
-                                <option value="tablet">Tablet</option>
-                                <option value="server">Server</option>
-                            </optgroup>
-                            <optgroup label="Network">
-                                <option value="firewall">Firewall</option>
-                                <option value="switch">Switch</option>
-                                <option value="router">Router</option>
-                                <option value="access-point">Access Point</option>
-                            </optgroup>
-                            <optgroup label="Accessories">
-                                <option value="ram">RAM</option>
-                                <option value="mouse">Mouse</option>
-                                <option value="headphone">Headphone</option>
-                                <option value="hard-disk">Hard Disk</option>
-                                <option value="wifi-adapter">WiFi Adapter</option>
-                                <option value="keyboard">Keyboard</option>
-                                <option value="charger">Charger</option>
-                            </optgroup>
-                        </select>
+            <!-- ═══ TICKETS TAB ═══ -->
+            <div id="tickets" class="tab-content active">
+                <div id="ticketStats" class="stats-bar"></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+                    <h2 style="margin:0;">Support Tickets</h2>
+                    <div style="display:flex;gap:8px;">
+                        <button onclick="showCreateTicketModal()" class="btn-outline btn-sm">+ New Ticket</button>
+                        <button onclick="refreshTickets()" class="btn-primary btn-sm">Refresh Inbox</button>
                     </div>
-                    <div class="form-group" id="assetIdField">
-                        <label>Asset ID</label>
-                        <input type="text" id="assetId" required>
-                    </div>
-                    <div class="form-group" id="modelField">
-                        <label>Brand/Model</label>
-                        <input type="text" id="assetModel" required>
-                    </div>
-                    
-                    <!-- Laptop Specific Fields -->
-                    <div id="laptopFields" style="display: none;">
+                </div>
+                <div class="filters">
+                    <select id="ticketStatusFilter">
+                        <option value="all">All Status</option>
+                        <option value="open">Open</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="resolved">Resolved</option>
+                        <option value="closed">Closed</option>
+                    </select>
+                    <select id="ticketPriorityFilter">
+                        <option value="all">All Priority</option>
+                        <option value="urgent">Urgent</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                    <input type="text" id="searchTicket" placeholder="Search tickets...">
+                </div>
+                <div id="ticketsList"></div>
+            </div>
+
+            <!-- ═══ ASSETS TAB ═══ -->
+            <div id="assets" class="tab-content">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+                    <h2 style="margin:0;">Asset Management</h2>
+                    <button onclick="showAddAssetForm()" class="btn-primary btn-sm">+ Add Asset</button>
+                </div>
+                <div class="filters">
+                    <select id="categoryFilter">
+                        <option value="all">All Categories</option>
+                        <optgroup label="Devices">
+                            <option value="laptop">Laptop</option><option value="desktop">Desktop</option>
+                            <option value="android-device">Android Device</option><option value="ios-device">iOS Device</option>
+                            <option value="mac-mini">Mac Mini</option><option value="mac-device">Mac Device</option>
+                            <option value="tablet">Tablet</option><option value="server">Server</option>
+                        </optgroup>
+                        <optgroup label="Network">
+                            <option value="firewall">Firewall</option><option value="switch">Switch</option>
+                            <option value="router">Router</option><option value="access-point">Access Point</option>
+                        </optgroup>
+                        <optgroup label="Accessories">
+                            <option value="ram">RAM</option><option value="mouse">Mouse</option>
+                            <option value="headphone">Headphone</option><option value="hard-disk">Hard Disk</option>
+                            <option value="wifi-adapter">WiFi Adapter</option><option value="keyboard">Keyboard</option>
+                            <option value="charger">Charger</option>
+                        </optgroup>
+                    </select>
+                    <select id="statusFilter">
+                        <option value="all">All Status</option>
+                        <option value="available">Available</option><option value="assigned">Assigned</option>
+                        <option value="maintenance">Maintenance</option><option value="retired">Retired</option>
+                    </select>
+                    <select id="officeFilter">
+                        <option value="all">All Offices</option>
+                        <option value="Office 1">Office 1</option><option value="Office 2">Office 2</option>
+                        <option value="Bangalore">Bangalore</option><option value="London(uk)">London (UK)</option>
+                        <option value="Not available">Not Available</option>
+                    </select>
+                    <input type="text" id="searchAsset" placeholder="Search assets...">
+                </div>
+                <div id="assetsList"></div>
+            </div>
+
+            <!-- ═══ ADD ASSET MODAL ═══ -->
+            <div id="addAssetModal" class="modal" style="display:none;">
+                <div class="modal-content" style="max-width:800px;max-height:90vh;overflow-y:auto;">
+                    <span class="close" onclick="closeAddAssetForm()">&times;</span>
+                    <form id="assetForm">
+                        <h2>Add New Asset</h2>
                         <div class="form-group">
-                            <label>Serial Number</label>
-                            <input type="text" id="serialNumber">
-                        </div>
-                        <div class="form-group">
-                            <label>Configuration</label>
-                            <input type="text" id="configuration" placeholder="e.g., Intel I5 7th gen, 16gb Ram, 240SSD">
-                        </div>
-                        <div class="form-group">
-                            <label>Office Location</label>
-                            <select id="officeLocation">
-                                <option value="">Select Location</option>
-                                <option value="Office 1">Office 1</option>
-                                <option value="Office 2">Office 2</option>
-                                <option value="Bangalore">Bangalore</option>
-                                <option value="London(uk)">London (UK)</option>
-                                <option value="Not available">Not Available</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Year</label>
-                            <input type="number" id="year" placeholder="e.g., 2021" min="2000" max="2030">
-                        </div>
-                        <div class="form-group">
-                            <label>Current Condition</label>
-                            <select id="currentCondition">
-                                <option value="">Select Condition</option>
-                                <option value="Working">Working</option>
-                                <option value="In Stock(working condition)">In Stock (Working)</option>
-                                <option value="In Stock( Not working condition)">In Stock (Not Working)</option>
-                                <option value="Not working">Not Working</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Current User</label>
-                            <input type="text" id="currentUser" placeholder="Current employee name">
-                        </div>
-                        <div class="form-group">
-                            <label>Last User (Optional)</label>
-                            <input type="text" id="lastUser" placeholder="Previous employee name">
-                        </div>
-                    </div>
-                    
-                    <!-- Mouse Specific Fields -->
-                    <div id="mouseFields" style="display: none;">
-                        <div class="form-group">
-                            <label>Quantity</label>
-                            <input type="number" id="mouseQuantity" min="1" placeholder="e.g., 10">
-                        </div>
-                        <div class="form-group">
-                            <label>Type</label>
-                            <select id="mouseType">
+                            <label>Asset Type</label>
+                            <select id="assetType" required>
                                 <option value="">Select Type</option>
-                                <option value="Wired">Wired</option>
-                                <option value="Wireless">Wireless</option>
+                                <optgroup label="Devices">
+                                    <option value="laptop">Laptop</option><option value="desktop">Desktop</option>
+                                    <option value="android-device">Android Device</option><option value="ios-device">iOS Device</option>
+                                    <option value="mac-mini">Mac Mini</option><option value="mac-device">Mac Device</option>
+                                    <option value="tablet">Tablet</option><option value="server">Server</option>
+                                </optgroup>
+                                <optgroup label="Network">
+                                    <option value="firewall">Firewall</option><option value="switch">Switch</option>
+                                    <option value="router">Router</option><option value="access-point">Access Point</option>
+                                </optgroup>
+                                <optgroup label="Accessories">
+                                    <option value="ram">RAM</option><option value="mouse">Mouse</option>
+                                    <option value="headphone">Headphone</option><option value="hard-disk">Hard Disk</option>
+                                    <option value="wifi-adapter">WiFi Adapter</option><option value="keyboard">Keyboard</option>
+                                    <option value="charger">Charger</option>
+                                </optgroup>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label>Location</label>
-                            <select id="mouseLocation">
-                                <option value="">Select Location</option>
-                                <option value="Office 1">Office 1</option>
-                                <option value="Office 2">Office 2</option>
-                                <option value="Bangalore">Bangalore</option>
-                                <option value="London(uk)">London (UK)</option>
-                                <option value="Not available">Not Available</option>
-                            </select>
+                        <div class="form-group" id="assetIdField"><label>Asset ID</label><input type="text" id="assetId" required></div>
+                        <div class="form-group" id="modelField"><label>Brand/Model</label><input type="text" id="assetModel" required></div>
+                        <div id="laptopFields" style="display:none;">
+                            <div class="form-group"><label>Serial Number</label><input type="text" id="serialNumber"></div>
+                            <div class="form-group"><label>Configuration</label><input type="text" id="configuration" placeholder="e.g., Intel I5 7th gen, 16gb Ram, 240SSD"></div>
+                            <div class="form-group"><label>Office Location</label>
+                                <select id="officeLocation"><option value="">Select Location</option><option value="Office 1">Office 1</option><option value="Office 2">Office 2</option><option value="Bangalore">Bangalore</option><option value="London(uk)">London (UK)</option><option value="Not available">Not Available</option></select>
+                            </div>
+                            <div class="form-group"><label>Year</label><input type="number" id="year" placeholder="e.g., 2021" min="2000" max="2030"></div>
+                            <div class="form-group"><label>Current Condition</label>
+                                <select id="currentCondition"><option value="">Select Condition</option><option value="Working">Working</option><option value="In Stock(working condition)">In Stock (Working)</option><option value="In Stock( Not working condition)">In Stock (Not Working)</option><option value="Not working">Not Working</option></select>
+                            </div>
+                            <div class="form-group"><label>Current User</label><input type="text" id="currentUser" placeholder="Current employee name"></div>
+                            <div class="form-group"><label>Last User (Optional)</label><input type="text" id="lastUser" placeholder="Previous employee name"></div>
                         </div>
-                    </div>
-                    
-                    <!-- Firewall Specific Fields -->
-                    <div id="firewallFields" style="display: none;">
-                        <div class="form-group">
-                            <label>Firewall Name</label>
-                            <input type="text" id="firewallName" placeholder="e.g., Main Office Firewall">
+                        <div id="mouseFields" style="display:none;">
+                            <div class="form-group"><label>Quantity</label><input type="number" id="mouseQuantity" min="1" placeholder="e.g., 10"></div>
+                            <div class="form-group"><label>Type</label><select id="mouseType"><option value="">Select Type</option><option value="Wired">Wired</option><option value="Wireless">Wireless</option></select></div>
+                            <div class="form-group"><label>Location</label><select id="mouseLocation"><option value="">Select Location</option><option value="Office 1">Office 1</option><option value="Office 2">Office 2</option><option value="Bangalore">Bangalore</option><option value="London(uk)">London (UK)</option><option value="Not available">Not Available</option></select></div>
                         </div>
-                        <div class="form-group">
-                            <label>Serial Number</label>
-                            <input type="text" id="firewallSerial" placeholder="e.g., FW123456789">
+                        <div id="firewallFields" style="display:none;">
+                            <div class="form-group"><label>Firewall Name</label><input type="text" id="firewallName"></div>
+                            <div class="form-group"><label>Serial Number</label><input type="text" id="firewallSerial"></div>
+                            <div class="form-group"><label>Purchase Year</label><input type="number" id="firewallYear" min="2000" max="2030"></div>
+                            <div class="form-group"><label>Last Firmware Updated</label><input type="date" id="lastFirmwareUpdate"></div>
+                            <div class="form-group"><label>Office Location</label><select id="firewallLocation"><option value="">Select Location</option><option value="Office 1">Office 1</option><option value="Office 2">Office 2</option><option value="Bangalore">Bangalore</option><option value="London(uk)">London (UK)</option><option value="Not available">Not Available</option></select></div>
                         </div>
-                        <div class="form-group">
-                            <label>Purchase Year</label>
-                            <input type="number" id="firewallYear" placeholder="e.g., 2022" min="2000" max="2030">
+                        <div id="ramFields" style="display:none;">
+                            <div class="form-group"><label>RAM Name/Brand</label><input type="text" id="ramName"></div>
+                            <div class="form-group"><label>Size</label><input type="text" id="ramSize" placeholder="e.g., 8GB, 16GB"></div>
+                            <div class="form-group"><label>DDR Type</label><select id="ramDDR"><option value="">Select DDR Type</option><option value="DDR3">DDR3</option><option value="DDR4">DDR4</option><option value="DDR5">DDR5</option></select></div>
+                            <div class="form-group"><label>Frequency</label><input type="text" id="ramFrequency" placeholder="e.g., 3200MHz"></div>
+                            <div class="form-group"><label>Quantity</label><input type="number" id="ramQuantity" min="1"></div>
+                            <div class="form-group"><label>Office Location</label><select id="ramLocation"><option value="">Select Location</option><option value="Office 1">Office 1</option><option value="Office 2">Office 2</option><option value="Bangalore">Bangalore</option><option value="London(uk)">London (UK)</option><option value="Not available">Not Available</option></select></div>
                         </div>
-                        <div class="form-group">
-                            <label>Last Firmware Updated</label>
-                            <input type="date" id="lastFirmwareUpdate">
+                        <div class="form-group"><label>Status</label>
+                            <select id="status"><option value="available">Available</option><option value="assigned">Assigned</option><option value="maintenance">Maintenance</option><option value="retired">Retired</option></select>
                         </div>
-                        <div class="form-group">
-                            <label>Office Location</label>
-                            <select id="firewallLocation">
-                                <option value="">Select Location</option>
-                                <option value="Office 1">Office 1</option>
-                                <option value="Office 2">Office 2</option>
-                                <option value="Bangalore">Bangalore</option>
-                                <option value="London(uk)">London (UK)</option>
-                                <option value="Not available">Not Available</option>
-                            </select>
+                        <div id="laptopAccessories" style="display:none;">
+                            <h3 style="margin:20px 0 15px;color:#818cf8;">Laptop Accessories</h3>
+                            <div class="form-group"><label>Mouse (Model & Serial)</label><input type="text" id="mouseName"></div>
+                            <div class="form-group"><label>Headphone (Model & Serial)</label><input type="text" id="headphoneName"></div>
+                            <div class="form-group"><label>Charger (Model & Serial)</label><input type="text" id="chargerName"></div>
+                            <div class="form-group"><label>Monitor (Model & Serial)</label><input type="text" id="monitorName"></div>
                         </div>
-                    </div>
-                    
-                    <!-- RAM Specific Fields -->
-                    <div id="ramFields" style="display: none;">
-                        <div class="form-group">
-                            <label>RAM Name/Brand</label>
-                            <input type="text" id="ramName" placeholder="e.g., Corsair Vengeance">
-                        </div>
-                        <div class="form-group">
-                            <label>Size</label>
-                            <input type="text" id="ramSize" placeholder="e.g., 8GB, 16GB, 32GB">
-                        </div>
-                        <div class="form-group">
-                            <label>DDR Type</label>
-                            <select id="ramDDR">
-                                <option value="">Select DDR Type</option>
-                                <option value="DDR3">DDR3</option>
-                                <option value="DDR4">DDR4</option>
-                                <option value="DDR5">DDR5</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Frequency</label>
-                            <input type="text" id="ramFrequency" placeholder="e.g., 3200MHz, 3600MHz">
-                        </div>
-                        <div class="form-group">
-                            <label>Quantity</label>
-                            <input type="number" id="ramQuantity" min="1" placeholder="e.g., 10">
-                        </div>
-                        <div class="form-group">
-                            <label>Office Location</label>
-                            <select id="ramLocation">
-                                <option value="">Select Location</option>
-                                <option value="Office 1">Office 1</option>
-                                <option value="Office 2">Office 2</option>
-                                <option value="Bangalore">Bangalore</option>
-                                <option value="London(uk)">London (UK)</option>
-                                <option value="Not available">Not Available</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Status</label>
-                        <select id="status">
-                            <option value="available">Available</option>
-                            <option value="assigned">Assigned</option>
-                            <option value="maintenance">Maintenance</option>
-                            <option value="retired">Retired</option>
-                        </select>
-                    </div>
-                    
-                    <div id="laptopAccessories" style="display: none;">
-                        <h3 style="margin: 20px 0 15px 0; color: #667eea;">Laptop Accessories</h3>
-                        
-                        <div class="form-group">
-                            <label>Mouse (Model & Serial)</label>
-                            <input type="text" id="mouseName" placeholder="e.g., Logitech M185 - SN123456">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Headphone (Model & Serial)</label>
-                            <input type="text" id="headphoneName" placeholder="e.g., Sony WH-1000XM4 - SN789012">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Charger (Model & Serial)</label>
-                            <input type="text" id="chargerName" placeholder="e.g., Dell 65W - SN345678">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Monitor (Model & Serial)</label>
-                            <input type="text" id="monitorName" placeholder="e.g., Dell P2419H - SN901234">
-                        </div>
-                    </div>
-                    
-                    <button type="submit" class="btn-primary">Add Asset</button>
-                </form>
+                        <button type="submit" class="btn-primary">Add Asset</button>
+                    </form>
+                </div>
             </div>
-        </div>
 
-        <div id="request" class="tab-content">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2>My Submitted Requests</h2>
-                <button onclick="showRequestForm()" class="btn-primary" style="padding: 10px 20px;">+ Submit a Request</button>
+            <!-- ═══ REQUEST TAB ═══ -->
+            <div id="request" class="tab-content">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+                    <h2 style="margin:0;">My Submitted Requests</h2>
+                    <button onclick="showRequestForm()" class="btn-primary btn-sm">+ Submit a Request</button>
+                </div>
+                <div id="requestsList"></div>
             </div>
-            <div id="requestsList"></div>
-        </div>
 
-        <!-- Request Form Modal -->
-        <div id="requestFormModal" class="modal" style="display: none;">
-            <div class="modal-content" style="max-width: 800px;">
-                <span class="close" onclick="closeRequestForm()">&times;</span>
-                <form id="requestForm">
-                    <h2>Submit a Request</h2>
-                    <div class="form-group">
-                        <label>Send To (Email Address)</label>
-                        <input type="email" id="requestEmail" required placeholder="Enter recipient email address">
-                    </div>
-                    <div class="form-group">
-                        <label>Subject/Heading</label>
-                        <input type="text" id="requestSubject" required placeholder="Enter request subject">
-                    </div>
-                    <div class="form-group">
-                        <label>Description</label>
-                        <textarea id="requestDescription" required placeholder="Describe your request in detail" rows="6" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; font-family: inherit;"></textarea>
-                    </div>
-                    <button type="submit" class="btn-primary">Submit Request</button>
-                </form>
+            <!-- ═══ REQUEST FORM MODAL ═══ -->
+            <div id="requestFormModal" class="modal" style="display:none;">
+                <div class="modal-content" style="max-width:700px;">
+                    <span class="close" onclick="closeRequestForm()">&times;</span>
+                    <form id="requestForm">
+                        <h2>Submit a Request</h2>
+                        <div class="form-group"><label>Send To (Email Address)</label><input type="email" id="requestEmail" required placeholder="Enter recipient email address"></div>
+                        <div class="form-group"><label>Subject/Heading</label><input type="text" id="requestSubject" required placeholder="Enter request subject"></div>
+                        <div class="form-group"><label>Description</label><textarea id="requestDescription" required placeholder="Describe your request in detail" rows="6"></textarea></div>
+                        <button type="submit" class="btn-primary">Submit Request</button>
+                    </form>
+                </div>
             </div>
-        </div>
-
-        <div id="tickets" class="tab-content active">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2>Support Tickets</h2>
-                <button onclick="refreshTickets()" class="btn-primary" style="padding: 10px 20px;">Refresh Tickets</button>
-            </div>
-            <div class="filters">
-                <select id="ticketStatusFilter">
-                    <option value="all">All Status</option>
-                    <option value="open">Open</option>
-                    <option value="in-progress">In Progress</option>
-                    <option value="resolved">Resolved</option>
-                    <option value="closed">Closed</option>
-                </select>
-                <input type="text" id="searchTicket" placeholder="Search tickets...">
-            </div>
-            <div id="ticketsList"></div>
         </div>
     </div>
 
-    <!-- View Modal -->
-    <div id="viewModal" class="modal" onclick="if(event.target === this) closeModal()">
+    <!-- ═══ GENERIC VIEW MODAL ═══ -->
+    <div id="viewModal" class="modal" onclick="if(event.target===this) closeModal()">
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal()">&times;</button>
             <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <!-- ═══ PROFILE MODAL ═══ -->
+    <div id="profileModal" class="modal" onclick="if(event.target===this) document.getElementById('profileModal').style.display='none'">
+        <div class="modal-content" style="max-width:450px;">
+            <button class="modal-close" onclick="document.getElementById('profileModal').style.display='none'">&times;</button>
+            <h2>Profile</h2>
+            <div class="detail-section">
+                <p><strong>Username:</strong> admin</p>
+                <p><strong>Role:</strong> Administrator</p>
+                <p><strong>Session:</strong> Active</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ MAIL CONFIG MODAL ═══ -->
+    <div id="mailConfigModal" class="modal" onclick="if(event.target===this) document.getElementById('mailConfigModal').style.display='none'">
+        <div class="modal-content" style="max-width:580px;">
+            <button class="modal-close" onclick="document.getElementById('mailConfigModal').style.display='none'">&times;</button>
+            <h2>Configure Mail</h2>
+            <p style="color:#8b8fa3;font-size:13px;margin-bottom:20px;">Connect your email account to receive support tickets automatically. Uses IMAP to fetch incoming emails and SMTP to send replies.</p>
+            <form id="mailConfigForm">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="mcEmail" required placeholder="your-email@gmail.com">
+                </div>
+                <div class="form-group">
+                    <label>App Password</label>
+                    <input type="password" id="mcPassword" required placeholder="Gmail App Password">
+                    <p style="font-size:11px;color:#6b7280;margin-top:4px;">For Gmail: Go to Google Account > Security > 2-Step Verification > App Passwords</p>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div class="form-group"><label>SMTP Server</label><input type="text" id="mcSmtp" value="smtp.gmail.com"></div>
+                    <div class="form-group"><label>SMTP Port</label><input type="number" id="mcSmtpPort" value="587"></div>
+                    <div class="form-group"><label>IMAP Server</label><input type="text" id="mcImap" value="imap.gmail.com"></div>
+                    <div class="form-group" style="display:flex;align-items:flex-end;">
+                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                            <input type="checkbox" id="mcTls" checked style="width:auto;"> Use TLS
+                        </label>
+                    </div>
+                </div>
+                <div id="mcTestResult" style="margin-bottom:14px;"></div>
+                <div style="display:flex;gap:10px;">
+                    <button type="button" class="btn-outline" onclick="testMailConfig()" id="mcTestBtn">Test Connection</button>
+                    <button type="submit" class="btn-primary" id="mcSaveBtn">Save Configuration</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ═══ CREATE TICKET MODAL ═══ -->
+    <div id="createTicketModal" class="modal" onclick="if(event.target===this) document.getElementById('createTicketModal').style.display='none'">
+        <div class="modal-content" style="max-width:600px;">
+            <button class="modal-close" onclick="document.getElementById('createTicketModal').style.display='none'">&times;</button>
+            <h2>Create Ticket Manually</h2>
+            <form id="createTicketForm">
+                <div class="form-group"><label>Requester Email</label><input type="email" id="ctEmail" required placeholder="customer@example.com"></div>
+                <div class="form-group"><label>Subject</label><input type="text" id="ctSubject" required placeholder="Ticket subject"></div>
+                <div class="form-group"><label>Description</label><textarea id="ctBody" required rows="5" placeholder="Describe the issue..."></textarea></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div class="form-group"><label>Priority</label>
+                        <select id="ctPriority"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option><option value="urgent">Urgent</option></select>
+                    </div>
+                    <div class="form-group"><label>Category</label>
+                        <select id="ctCategory"><option value="">None</option><option value="Hardware">Hardware</option><option value="Software">Software</option><option value="Network">Network</option><option value="Access">Access</option><option value="Other">Other</option></select>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary">Create Ticket</button>
+            </form>
         </div>
     </div>
 

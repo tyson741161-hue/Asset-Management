@@ -116,6 +116,9 @@ class Ticket(db.Model):
     from_email = db.Column(db.String(200), nullable=False)
     body = db.Column(db.Text)
     status = db.Column(db.String(50), default='open')
+    priority = db.Column(db.String(20), default='medium')
+    assigned_to = db.Column(db.String(200))
+    category = db.Column(db.String(100))
     date = db.Column(db.DateTime, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -133,6 +136,9 @@ class Ticket(db.Model):
             'from_email': self.from_email,
             'body': self.body,
             'status': self.status,
+            'priority': self.priority or 'medium',
+            'assigned_to': self.assigned_to or '',
+            'category': self.category or '',
             'date': self.date.isoformat(),
             'replies': [reply.to_dict() for reply in self.replies],
             'notes': [note.to_dict() for note in self.notes]
@@ -195,4 +201,34 @@ class Request(db.Model):
             'subject': self.subject,
             'description': self.description,
             'date': self.date.isoformat()
+        }
+
+
+class EmailConfig(db.Model):
+    """User-configurable email settings for ticket ingestion and sending"""
+    __tablename__ = 'email_config'
+
+    id = db.Column(db.Integer, primary_key=True)
+    email_address = db.Column(db.String(200), nullable=False)
+    app_password = db.Column(db.String(200), nullable=False)
+    smtp_server = db.Column(db.String(200), nullable=False, default='smtp.gmail.com')
+    smtp_port = db.Column(db.Integer, nullable=False, default=587)
+    imap_server = db.Column(db.String(200), nullable=False, default='imap.gmail.com')
+    use_tls = db.Column(db.Boolean, default=True)
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def to_dict(self, mask_password=True):
+        """Convert to dictionary. Password masked by default."""
+        pwd = ('*' * 8) if mask_password else self.app_password
+        return {
+            'id': self.id,
+            'email_address': self.email_address,
+            'app_password': pwd,
+            'smtp_server': self.smtp_server,
+            'smtp_port': self.smtp_port,
+            'imap_server': self.imap_server,
+            'use_tls': self.use_tls,
+            'is_active': self.is_active,
         }
